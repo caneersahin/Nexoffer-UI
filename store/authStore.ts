@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import axios from 'axios';
+import { api } from '../lib/api';
 
 interface User {
   id: string;
@@ -33,7 +33,6 @@ interface RegisterData {
   companyPhone: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:53759';
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -44,7 +43,7 @@ export const useAuthStore = create<AuthState>()(
 
       login: async (email: string, password: string) => {
         try {
-          const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
+          const response = await api.post('/api/auth/login', {
             email,
             password,
           });
@@ -54,7 +53,7 @@ export const useAuthStore = create<AuthState>()(
           set({ user, token, isLoading: false });
           
           // Set axios default header
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         } catch (error: any) {
           throw new Error(error.response?.data?.message || 'Giriş başarısız');
         }
@@ -62,14 +61,14 @@ export const useAuthStore = create<AuthState>()(
 
       register: async (data: RegisterData) => {
         try {
-          const response = await axios.post(`${API_BASE_URL}/api/auth/register`, data);
+          const response = await api.post('/api/auth/register', data);
           
           const { token, user } = response.data;
           
           set({ user, token, isLoading: false });
           
           // Set axios default header
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         } catch (error: any) {
           throw new Error(error.response?.data?.message || 'Kayıt başarısız');
         }
@@ -77,7 +76,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: () => {
         set({ user: null, token: null });
-        delete axios.defaults.headers.common['Authorization'];
+        delete api.defaults.headers.common['Authorization'];
       },
 
       setUser: (user: User) => {
@@ -87,7 +86,7 @@ export const useAuthStore = create<AuthState>()(
       initializeAuth: () => {
         const { token } = get();
         if (token) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         }
         set({ isLoading: false });
       },

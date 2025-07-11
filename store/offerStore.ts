@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import { api } from '../lib/api';
 
 interface OfferItem {
   id: number;
@@ -57,7 +57,6 @@ interface OfferState {
   setCurrentOffer: (offer: Offer | null) => void;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:53759';
 
 export const useOfferStore = create<OfferState>((set, get) => ({
   offers: [],
@@ -68,7 +67,7 @@ export const useOfferStore = create<OfferState>((set, get) => ({
   fetchOffers: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/offers`);
+      const response = await api.get('/api/offers');
       set({ offers: response.data, loading: false });
     } catch (error: any) {
       set({ 
@@ -81,7 +80,7 @@ export const useOfferStore = create<OfferState>((set, get) => ({
   fetchOffer: async (id: number) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/offers/${id}`);
+      const response = await api.get(`/api/offers/${id}`);
       set({ currentOffer: response.data, loading: false });
     } catch (error: any) {
       set({ 
@@ -93,7 +92,7 @@ export const useOfferStore = create<OfferState>((set, get) => ({
 
   createOffer: async (data: CreateOfferData) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/offers`, data);
+      const response = await api.post('/api/offers', data);
       const newOffer = response.data;
       
       set((state) => ({
@@ -108,7 +107,7 @@ export const useOfferStore = create<OfferState>((set, get) => ({
 
   updateOffer: async (id: number, data: CreateOfferData) => {
     try {
-      const response = await axios.put(`${API_BASE_URL}/api/offers/${id}`, data);
+      const response = await api.put(`/api/offers/${id}`, data);
       const updatedOffer = response.data;
       
       set((state) => ({
@@ -126,7 +125,7 @@ export const useOfferStore = create<OfferState>((set, get) => ({
 
   deleteOffer: async (id: number) => {
     try {
-      await axios.delete(`${API_BASE_URL}/api/offers/${id}`);
+      await api.delete(`/api/offers/${id}`);
       
       set((state) => ({
         offers: state.offers.filter((offer) => offer.id !== id),
@@ -139,7 +138,7 @@ export const useOfferStore = create<OfferState>((set, get) => ({
 
   sendOffer: async (id: number) => {
     try {
-      await axios.post(`${API_BASE_URL}/api/offers/${id}/send`);
+      await api.post(`/api/offers/${id}/send`);
       
       set((state) => ({
         offers: state.offers.map((offer) => 
