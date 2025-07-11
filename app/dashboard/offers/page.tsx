@@ -29,6 +29,8 @@ export default function OffersPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedOfferId, setSelectedOfferId] = useState<number | null>(null);
+  const [sendDialogOpen, setSendDialogOpen] = useState(false);
+  const [offerToSend, setOfferToSend] = useState<number | null>(null);
 
   useEffect(() => {
     fetchOffers();
@@ -54,10 +56,13 @@ export default function OffersPage() {
     }
   };
 
-  const handleSendOffer = async (id: number) => {
+  const handleSendOffer = async () => {
+    if (!offerToSend) return;
     try {
-      await sendOffer(id);
+      await sendOffer(offerToSend);
       toast.success('Teklif gönderildi');
+      setSendDialogOpen(false);
+      setOfferToSend(null);
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -235,7 +240,10 @@ export default function OffersPage() {
                           </button>
                           {offer.status !== 'Sent' && (
                             <button
-                              onClick={() => handleSendOffer(offer.id)}
+                              onClick={() => {
+                                setOfferToSend(offer.id);
+                                setSendDialogOpen(true);
+                              }}
                               className="text-green-400 hover:text-green-600"
                               title="Gönder"
                             >
@@ -272,6 +280,17 @@ export default function OffersPage() {
         message="Bu teklifi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
         confirmText="Sil"
         type="danger"
+      />
+
+      {/* Send Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={sendDialogOpen}
+        onClose={() => setSendDialogOpen(false)}
+        onConfirm={handleSendOffer}
+        title="Teklifi Gönder"
+        message="Teklifi müşteriye göndermek istediğinizden emin misiniz?"
+        confirmText="Gönder"
+        type="info"
       />
     </div>
   );

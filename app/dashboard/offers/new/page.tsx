@@ -297,7 +297,7 @@ export default function NewOfferPage() {
                         onChange={(e) => handleItemChange(index, 'unitPrice', parseFloat(e.target.value))}
                       />
                     </div>
-                    <div className="flex items-end">
+                    <div className="flex flex-col md:flex-row items-start md:items-end gap-2">
                       <div className="flex-1">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Toplam

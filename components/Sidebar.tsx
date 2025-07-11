@@ -33,7 +33,7 @@ export default function Sidebar() {
       <div className="fixed top-4 left-4 z-50 lg:hidden">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="bg-white p-2 rounded-md shadow-md border"
+          className="bg-white dark:bg-gray-800 p-2 rounded-md shadow-md border dark:border-gray-700"
         >
           {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
@@ -43,9 +43,9 @@ export default function Sidebar() {
       <div className={`sidebar ${isOpen ? 'sidebar-open' : 'sidebar-closed'} lg:translate-x-0`}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center px-6 py-4 border-b">
+          <div className="flex items-center px-6 py-4 border-b dark:border-gray-700">
             <Building2 className="h-8 w-8 text-primary-600" />
-            <span className="ml-3 text-xl font-bold text-gray-900">TeklifPro</span>
+            <span className="ml-3 text-xl font-bold text-gray-900 dark:text-gray-100">TeklifPro</span>
           </div>
 
           {/* Navigation */}
@@ -59,8 +59,8 @@ export default function Sidebar() {
                   onClick={() => setIsOpen(false)}
                   className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                     isActive
-                      ? 'bg-primary-50 text-primary-700 border-r-2 border-primary-500'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? 'bg-primary-50 text-primary-700 border-r-2 border-primary-500 dark:bg-primary-600/20 dark:text-primary-200'
+                      : 'text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700'
                   }`}
                 >
                   <item.icon className="h-5 w-5 mr-3" />
@@ -71,8 +71,8 @@ export default function Sidebar() {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t">
-            <div className="text-xs text-gray-500">
+          <div className="p-4 border-t dark:border-gray-700">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
               © 2024 TeklifPro
             </div>
           </div>
