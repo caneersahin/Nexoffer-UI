@@ -104,7 +104,7 @@ export default function OffersPage() {
 
       {/* Filters */}
       <div className="card">
-        <div className="card-body">
+        <div className="card-body p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">

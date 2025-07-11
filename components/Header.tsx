@@ -48,14 +48,19 @@ export default function Header() {
               <div className="h-8 w-8 bg-primary-600 rounded-full flex items-center justify-center">
                 <User className="h-5 w-5 text-white" />
               </div>
-              <div className="text-left">
+
+              {/* Bu kısım sadece md ve üstü ekranlarda gözükecek */}
+              <div className="text-left hidden md:block">
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   {user?.firstName} {user?.lastName}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
               </div>
-              <ChevronDown className="h-4 w-4 text-gray-400" />
+
+              {/* Chevron da sadece md ve üstü gözüksün istersen */}
+              <ChevronDown className="h-4 w-4 text-gray-400 hidden md:block" />
             </button>
+
 
             {isProfileOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg ring-1 ring-black ring-opacity-5">

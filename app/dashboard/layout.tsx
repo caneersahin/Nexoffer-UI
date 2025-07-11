@@ -36,12 +36,13 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="main-content main-content-with-sidebar">
-        <Header />
-        <main className="p-6">{children}</main>
-      </div>
-    </div>
+<div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  <Sidebar />
+  <div className="main-content-with-sidebar ml-0 md:ml-[16rem]">
+    <Header />
+    <main className="p-6">{children}</main>
+  </div>
+</div>
+
   );
 }
