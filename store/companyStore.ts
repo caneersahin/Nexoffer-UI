@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import { api } from '../lib/api';
 
 interface Company {
   id: number;
@@ -36,7 +36,6 @@ interface CompanyState {
   uploadLogo: (file: File) => Promise<void>;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:53759';
 
 export const useCompanyStore = create<CompanyState>((set, get) => ({
   company: null,
@@ -46,7 +45,7 @@ export const useCompanyStore = create<CompanyState>((set, get) => ({
   fetchCompany: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/company/me`);
+      const response = await api.get('/api/company/me');
       set({ company: response.data, loading: false });
     } catch (error: any) {
       set({ 
@@ -58,7 +57,7 @@ export const useCompanyStore = create<CompanyState>((set, get) => ({
 
   updateCompany: async (data: UpdateCompanyData) => {
     try {
-      const response = await axios.put(`${API_BASE_URL}/api/company`, data);
+      const response = await api.put('/api/company', data);
       set({ company: response.data });
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Şirket bilgileri güncellenemedi');
@@ -70,7 +69,7 @@ export const useCompanyStore = create<CompanyState>((set, get) => ({
       const formData = new FormData();
       formData.append('logo', file);
       
-      await axios.post(`${API_BASE_URL}/api/company/logo`, formData, {
+      await api.post('/api/company/logo', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
