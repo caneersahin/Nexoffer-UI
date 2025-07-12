@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOfferStore } from '@/store/offerStore';
 import { useCustomerStore } from '@/store/customerStore';
+import { useProductStore } from '@/store/productStore';
 import { Plus, Trash2, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 
 interface OfferItem {
+  productId?: number;
   description: string;
   quantity: number;
   unitPrice: number;
@@ -19,6 +21,7 @@ export default function NewOfferPage() {
   const router = useRouter();
   const { createOffer } = useOfferStore();
   const { customers, fetchCustomers, createCustomer } = useCustomerStore();
+  const { products, fetchProducts, createProduct } = useProductStore();
   const [loading, setLoading] = useState(false);
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | ''>('');
   
@@ -34,12 +37,16 @@ export default function NewOfferPage() {
   });
 
   const [items, setItems] = useState<OfferItem[]>([
-    { description: '', quantity: 1, unitPrice: 0, totalPrice: 0 }
+    { productId: undefined, description: '', quantity: 1, unitPrice: 0, totalPrice: 0 }
   ]);
 
   useEffect(() => {
     fetchCustomers();
   }, [fetchCustomers]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   useEffect(() => {
     if (selectedCustomerId === '') {
@@ -86,8 +93,25 @@ export default function NewOfferPage() {
     setItems(newItems);
   };
 
+  const handleProductSelect = (index: number, name: string) => {
+    const product = products.find(p => p.name === name);
+    const newItems = [...items];
+    if (product) {
+      newItems[index] = {
+        ...newItems[index],
+        productId: product.id,
+        description: product.name,
+        unitPrice: product.price,
+        totalPrice: newItems[index].quantity * product.price,
+      };
+    } else {
+      newItems[index] = { ...newItems[index], productId: undefined };
+    }
+    setItems(newItems);
+  };
+
   const addItem = () => {
-    setItems([...items, { description: '', quantity: 1, unitPrice: 0, totalPrice: 0 }]);
+    setItems([...items, { productId: undefined, description: '', quantity: 1, unitPrice: 0, totalPrice: 0 }]);
   };
 
   const removeItem = (index: number) => {
@@ -112,6 +136,19 @@ export default function NewOfferPage() {
           phone: formData.customerPhone || undefined,
           address: formData.customerAddress || undefined,
         });
+      }
+
+      // create products that are new
+      for (const item of items) {
+        if (!item.productId) {
+          try {
+            const newProduct = await createProduct({
+              name: item.description,
+              price: item.unitPrice,
+            });
+            item.productId = newProduct.id;
+          } catch {}
+        }
       }
 
       const offerData = {
@@ -322,15 +359,24 @@ export default function NewOfferPage() {
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Açıklama
+                        Ürün
                       </label>
                       <input
+                        list={`product-options-${index}`}
                         type="text"
                         className="input"
                         value={item.description}
-                        onChange={(e) => handleItemChange(index, 'description', e.target.value)}
-                        placeholder="Ürün/hizmet açıklaması"
+                        onChange={(e) => {
+                          handleItemChange(index, 'description', e.target.value);
+                          handleProductSelect(index, e.target.value);
+                        }}
+                        placeholder="Ürün ara veya yeni ekle"
                       />
+                      <datalist id={`product-options-${index}`}>
+                        {products.map((p) => (
+                          <option key={p.id} value={p.name} />
+                        ))}
+                      </datalist>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">

@@ -11,6 +11,7 @@ import {
   User,
   CreditCard,
   Settings,
+  Package,
   Menu,
   X
 } from 'lucide-react';
@@ -19,6 +20,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Teklifler', href: '/dashboard/offers', icon: FileText },
   { name: 'Müşteriler', href: '/dashboard/customers', icon: User },
+  { name: 'Ürünler', href: '/dashboard/products', icon: Package },
   { name: 'Şirket', href: '/dashboard/company', icon: Building2 },
   { name: 'Kullanıcılar', href: '/dashboard/users', icon: Users },
   { name: 'Abonelik', href: '/dashboard/billing', icon: CreditCard },
