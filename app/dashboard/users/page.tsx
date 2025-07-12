@@ -1,13 +1,15 @@
-import UsersClient from './UsersClient';
-import { api } from '@/lib/api';
+'use client';
 
-export default async function UsersPage() {
-  try {
-    const response = await api.get('/api/users');
-    const users = response.data as any[];
-    return <UsersClient initialUsers={users} />;
-  } catch (error) {
-    console.error('Failed to fetch users', error);
-    return <UsersClient initialUsers={[]} />;
-  }
+import { useEffect } from 'react';
+import UsersClient from './UsersClient';
+import { useUserStore } from '@/store/userStore';
+
+export default function UsersPage() {
+  const { fetchUsers } = useUserStore();
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  return <UsersClient />;
 }

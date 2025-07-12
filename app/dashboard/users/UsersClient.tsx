@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import { useUserStore } from '@/store/userStore';
 import {
   Plus,
   Trash2,
@@ -16,22 +17,10 @@ import { tr } from 'date-fns/locale';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import toast from 'react-hot-toast';
 
-interface UserType {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  isActive: boolean;
-  createdAt: string;
-}
-
-interface UsersClientProps {
-  initialUsers: UserType[];
-}
-
-export default function UsersClient({ initialUsers }: UsersClientProps) {
+export default function UsersClient() {
   const { user: currentUser } = useAuthStore();
-  const [users, setUsers] = useState<UserType[]>(initialUsers);
+  const { users, fetchUsers, createUser, deleteUser, toggleUserStatus } =
+    useUserStore();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -43,19 +32,15 @@ export default function UsersClient({ initialUsers }: UsersClientProps) {
     password: '',
   });
 
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      // Mock API call
-      const newUserData: UserType = {
-        id: Date.now().toString(),
-        ...newUser,
-        isActive: true,
-        createdAt: new Date().toISOString(),
-      };
-
-      setUsers([...users, newUserData]);
+      await createUser(newUser);
       setNewUser({ firstName: '', lastName: '', email: '', password: '' });
       setShowCreateModal(false);
       toast.success('Kullanıcı başarıyla oluşturuldu');
@@ -67,7 +52,7 @@ export default function UsersClient({ initialUsers }: UsersClientProps) {
   const handleDeleteUser = async () => {
     if (selectedUserId) {
       try {
-        setUsers(users.filter((u) => u.id !== selectedUserId));
+        await deleteUser(selectedUserId);
         setDeleteDialogOpen(false);
         setSelectedUserId(null);
         toast.success('Kullanıcı silindi');
@@ -79,11 +64,7 @@ export default function UsersClient({ initialUsers }: UsersClientProps) {
 
   const handleToggleUserStatus = async (userId: string) => {
     try {
-      setUsers(
-        users.map((user) =>
-          user.id === userId ? { ...user, isActive: !user.isActive } : user
-        )
-      );
+      await toggleUserStatus(userId);
       toast.success('Kullanıcı durumu güncellendi');
     } catch (error: any) {
       toast.error(error.message);
