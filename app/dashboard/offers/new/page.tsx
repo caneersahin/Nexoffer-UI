@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useOfferStore } from '@/store/offerStore';
+import { useCustomerStore } from '@/store/customerStore';
 import { Plus, Trash2, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
@@ -17,7 +18,9 @@ interface OfferItem {
 export default function NewOfferPage() {
   const router = useRouter();
   const { createOffer } = useOfferStore();
+  const { customers, fetchCustomers, createCustomer } = useCustomerStore();
   const [loading, setLoading] = useState(false);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | ''>('');
   
   const [formData, setFormData] = useState({
     customerName: '',
@@ -33,6 +36,33 @@ export default function NewOfferPage() {
   const [items, setItems] = useState<OfferItem[]>([
     { description: '', quantity: 1, unitPrice: 0, totalPrice: 0 }
   ]);
+
+  useEffect(() => {
+    fetchCustomers();
+  }, [fetchCustomers]);
+
+  useEffect(() => {
+    if (selectedCustomerId === '') {
+      setFormData((data) => ({
+        ...data,
+        customerName: '',
+        customerEmail: '',
+        customerPhone: '',
+        customerAddress: '',
+      }));
+    } else {
+      const c = customers.find((c) => c.id === selectedCustomerId);
+      if (c) {
+        setFormData((data) => ({
+          ...data,
+          customerName: c.name,
+          customerEmail: c.email,
+          customerPhone: c.phone || '',
+          customerAddress: c.address || '',
+        }));
+      }
+    }
+  }, [selectedCustomerId, customers]);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -75,6 +105,15 @@ export default function NewOfferPage() {
     setLoading(true);
 
     try {
+      if (selectedCustomerId === '') {
+        await createCustomer({
+          name: formData.customerName,
+          email: formData.customerEmail,
+          phone: formData.customerPhone || undefined,
+          address: formData.customerAddress || undefined,
+        });
+      }
+
       const offerData = {
         ...formData,
         items: items.map(item => ({
@@ -118,6 +157,27 @@ export default function NewOfferPage() {
           </div>
           <div className="card-body">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Kayıtlı Müşteri
+                </label>
+                <select
+                  className="input"
+                  value={selectedCustomerId}
+                  onChange={(e) =>
+                    setSelectedCustomerId(
+                      e.target.value === '' ? '' : parseInt(e.target.value)
+                    )
+                  }
+                >
+                  <option value="">Yeni Müşteri</option>
+                  {customers.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} - {c.email}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Müşteri Adı *
