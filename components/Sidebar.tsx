@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Building2, 
-  Users, 
-  CreditCard, 
+import {
+  LayoutDashboard,
+  FileText,
+  Building2,
+  Users,
+  User,
+  CreditCard,
   Settings,
   Menu,
   X
@@ -17,6 +18,7 @@ import {
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Teklifler', href: '/dashboard/offers', icon: FileText },
+  { name: 'Müşteriler', href: '/dashboard/customers', icon: User },
   { name: 'Şirket', href: '/dashboard/company', icon: Building2 },
   { name: 'Kullanıcılar', href: '/dashboard/users', icon: Users },
   { name: 'Abonelik', href: '/dashboard/billing', icon: CreditCard },
