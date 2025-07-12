@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { api } from '../lib/api';
+import { useCompanyStore } from './companyStore';
 
 interface OfferItem {
   id: number;
@@ -138,7 +139,14 @@ export const useOfferStore = create<OfferState>((set, get) => ({
 
   sendOffer: async (id: number) => {
     try {
+      const { company, fetchCompany } = useCompanyStore.getState();
+      if (company && company.subscriptionPlan === 'Free' && company.offersUsed >= 5) {
+        throw new Error('Ücretsiz plan limiti doldu. Lütfen planınızı yükseltin.');
+      }
+
       await api.post(`/api/offers/${id}/send`);
+
+      await fetchCompany();
       
       set((state) => ({
         offers: state.offers.map((offer) => 

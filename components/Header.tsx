@@ -2,12 +2,14 @@
 
 import { useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import { useCompanyStore } from '@/store/companyStore';
 import { Bell, Search, User, LogOut, ChevronDown } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 
 export default function Header() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, logout } = useAuthStore();
+  const { company } = useCompanyStore();
 
   const handleLogout = () => {
     logout();
@@ -31,6 +33,13 @@ export default function Header() {
 
         {/* Right side */}
         <div className="flex items-center space-x-4">
+          {company && (
+            <span className="hidden sm:block text-sm text-gray-600 dark:text-gray-300 mr-2">
+              {company.subscriptionPlan === 'Free'
+                ? `Ücretsiz Plan - ${company.offersUsed}/5`
+                : `${company.subscriptionPlan} Planı`}
+            </span>
+          )}
           {/* Notifications */}
           <button className="relative p-2 text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-white">
             <Bell className="h-6 w-6" />

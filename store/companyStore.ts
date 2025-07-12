@@ -12,6 +12,7 @@ interface Company {
   iban?: string;
   website?: string;
   subscriptionPlan: string;
+  offersUsed: number;
   subscriptionStartDate: string;
   subscriptionEndDate?: string;
   isActive: boolean;
@@ -34,6 +35,7 @@ interface CompanyState {
   fetchCompany: () => Promise<void>;
   updateCompany: (data: UpdateCompanyData) => Promise<void>;
   uploadLogo: (file: File) => Promise<void>;
+  upgradePlan: (plan: string) => Promise<void>;
 }
 
 
@@ -79,6 +81,15 @@ export const useCompanyStore = create<CompanyState>((set, get) => ({
       await get().fetchCompany();
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Logo yüklenemedi');
+    }
+  },
+
+  upgradePlan: async (plan: string) => {
+    try {
+      const response = await api.post('/api/company/upgrade', { plan });
+      set({ company: response.data });
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Plan yükseltilemedi');
     }
   },
 }));

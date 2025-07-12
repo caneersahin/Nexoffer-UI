@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useCompanyStore } from '@/store/companyStore';
+import PaymentModal from '@/components/PaymentModal';
+import toast from 'react-hot-toast';
 import { 
   CreditCard, 
   Check, 
@@ -73,33 +75,32 @@ const plans = [
 ];
 
 export default function BillingPage() {
-  const { company, fetchCompany } = useCompanyStore();
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { company, fetchCompany, upgradePlan } = useCompanyStore();
+  const [selectedPlan, setSelectedPlan] = useState<{name: string; price: number} | null>(null);
+  const [processing, setProcessing] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
 
   useEffect(() => {
     fetchCompany();
   }, [fetchCompany]);
 
-  const handlePlanSelect = async (planName: string) => {
-    setLoading(true);
-    setSelectedPlan(planName);
-    
+  const handlePlanSelect = (planName: string, price: number) => {
+    setSelectedPlan({ name: planName, price });
+    setShowPayment(true);
+  };
+
+  const completePayment = async () => {
+    if (!selectedPlan) return;
+    setProcessing(true);
     try {
-      // Mock payment process
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // In real app, this would trigger Stripe/iyzico payment
-      console.log(`Upgrading to ${planName} plan`);
-      
-      // Simulate success
-      alert(`${planName} planına yükseltme işlemi başarılı!`);
-      
-    } catch (error) {
-      console.error('Payment failed:', error);
-      alert('Ödeme işlemi başarısız oldu.');
+      await upgradePlan(selectedPlan.name);
+      toast.success('Plan başarıyla güncellendi');
+      await fetchCompany();
+    } catch (error: any) {
+      toast.error(error.message || 'İşlem başarısız');
     } finally {
-      setLoading(false);
+      setProcessing(false);
+      setShowPayment(false);
       setSelectedPlan(null);
     }
   };
@@ -155,16 +156,16 @@ export default function BillingPage() {
               <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <FileText className="h-6 w-6 text-blue-600" />
               </div>
-              <p className="text-2xl font-bold text-gray-900">12</p>
+              <p className="text-2xl font-bold text-gray-900">{company?.offersUsed ?? 0}</p>
               <p className="text-sm text-gray-500">Oluşturulan Teklif</p>
               <div className="mt-2 bg-gray-200 rounded-full h-2">
-                <div className="bg-blue-600 h-2 rounded-full" style={{ width: '24%' }}></div>
+                <div
+                  className="bg-blue-600 h-2 rounded-full"
+                  style={{ width: `${company ? Math.min((company.offersUsed / 5) * 100, 100) : 0}%` }}
+                ></div>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                {company?.subscriptionPlan === 'Free' ? '5 limitinden' :
-                 company?.subscriptionPlan === 'Pro' ? '50 limitinden' :
-                 'Sınırsız'
-                }
+                {company?.subscriptionPlan === 'Free' ? '5 limitinden' : 'Sınırsız'}
               </p>
             </div>
             
@@ -248,15 +249,15 @@ export default function BillingPage() {
                 
                 <div className="mt-6">
                   <button
-                    onClick={() => handlePlanSelect(plan.name)}
-                    disabled={loading && selectedPlan === plan.name}
+                    onClick={() => handlePlanSelect(plan.name, plan.price)}
+                    disabled={processing && selectedPlan?.name === plan.name}
                     className={`w-full btn btn-md ${
                       plan.popular
                         ? 'btn-primary'
                         : 'btn-outline'
                     }`}
                   >
-                    {loading && selectedPlan === plan.name ? (
+                    {processing && selectedPlan?.name === plan.name ? (
                       <div className="flex items-center justify-center">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                         İşleniyor...
@@ -311,6 +312,20 @@ export default function BillingPage() {
           </div>
         </div>
       </div>
+      {selectedPlan && (
+        <PaymentModal
+          isOpen={showPayment}
+          plan={selectedPlan.name}
+          price={selectedPlan.price}
+          onConfirm={completePayment}
+          onClose={() => {
+            if (!processing) {
+              setShowPayment(false);
+              setSelectedPlan(null);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
