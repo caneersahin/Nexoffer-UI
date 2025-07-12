@@ -93,7 +93,7 @@ export default function DashboardPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <div className="card">
-          <div className="card-body">
+          <div className="card-body p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Toplam Teklif</p>
@@ -107,7 +107,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="card">
-          <div className="card-body">
+          <div className="card-body p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Gönderilen</p>
@@ -121,7 +121,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="card">
-          <div className="card-body">
+          <div className="card-body p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Kabul Edilen</p>
@@ -135,7 +135,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="card">
-          <div className="card-body">
+          <div className="card-body p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Toplam Tutar</p>

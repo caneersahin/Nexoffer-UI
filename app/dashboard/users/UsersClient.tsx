@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import {
   Plus,
@@ -42,6 +42,10 @@ export default function UsersClient({ initialUsers }: UsersClientProps) {
     email: '',
     password: '',
   });
+
+  useEffect(() => {
+    console.log("user değişti");
+  }, [users]);
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
