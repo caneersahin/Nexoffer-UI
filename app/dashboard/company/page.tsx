@@ -247,7 +247,7 @@ export default function CompanyPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Mevcut Plan
                 </label>
-                <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="p-3 bg-gray-50 rounded-lg input">
                   <span className="font-medium capitalize">{company.subscriptionPlan}</span>
                 </div>
               </div>
@@ -255,7 +255,7 @@ export default function CompanyPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Başlangıç Tarihi
                 </label>
-                <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="p-3 bg-gray-50 rounded-lg input">
                   {new Date(company.subscriptionStartDate).toLocaleDateString('tr-TR')}
                 </div>
               </div>
@@ -263,7 +263,7 @@ export default function CompanyPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Bitiş Tarihi
                 </label>
-                <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="p-3 bg-gray-50 rounded-lg input">
                   {company.subscriptionEndDate
                     ? new Date(company.subscriptionEndDate).toLocaleDateString('tr-TR')
                     : 'Sınırsız'

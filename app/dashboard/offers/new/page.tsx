@@ -274,12 +274,12 @@ export default function NewOfferPage() {
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Adres *
+                  Adres 
                 </label>
                 <input
                   type="text"
                   name="customerAddress"
-                  required
+                  
                   className="input"
                   value={formData.customerAddress}
                   onChange={handleFormChange}
@@ -311,11 +311,12 @@ export default function NewOfferPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Geçerlilik Tarihi
+                  Geçerlilik Tarihi *
                 </label>
                 <input
                   type="date"
                   name="dueDate"
+                  required
                   className="input"
                   value={formData.dueDate}
                   onChange={handleFormChange}

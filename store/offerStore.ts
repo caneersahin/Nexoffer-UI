@@ -102,7 +102,8 @@ export const useOfferStore = create<OfferState>((set, get) => ({
       
       return newOffer;
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Teklif oluşturulamadı');
+      console.log("error", error)
+      throw new Error(error.response?.data?.message || error.response?.data || 'Teklif oluşturulamadı');
     }
   },
 

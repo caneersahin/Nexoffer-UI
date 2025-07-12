@@ -95,6 +95,8 @@ export default function BillingPage() {
     try {
       await upgradePlan(selectedPlan.name);
       toast.success('Plan başarıyla güncellendi');
+    console.log("company", company)
+
       await fetchCompany();
     } catch (error: any) {
       toast.error(error.message || 'İşlem başarısız');
@@ -179,9 +181,10 @@ export default function BillingPage() {
                 <div className="bg-green-600 h-2 rounded-full" style={{ width: '60%' }}></div>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                {company?.subscriptionPlan === 'Free' ? '1 limitinden' :
+                {
+                company?.subscriptionPlan === 'Free' ? '1 limitinden' :
                  company?.subscriptionPlan === 'Pro' ? '5 limitinden' :
-                 'Sınırsız'
+                 'Sınırsız'                
                 }
               </p>
             </div>
