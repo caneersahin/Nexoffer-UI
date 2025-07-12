@@ -8,6 +8,7 @@ import { useProductStore } from '@/store/productStore';
 import { Plus, Trash2, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import toast from 'react-hot-toast';
+import AutocompleteInput from '@/components/AutocompleteInput';
 
 interface OfferItem {
   productId?: number;
@@ -361,22 +362,16 @@ export default function NewOfferPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Ürün
                       </label>
-                      <input
-                        list={`product-options-${index}`}
-                        type="text"
-                        className="input"
+                      <AutocompleteInput
                         value={item.description}
-                        onChange={(e) => {
-                          handleItemChange(index, 'description', e.target.value);
-                          handleProductSelect(index, e.target.value);
+                        onChange={(val) => {
+                          handleItemChange(index, 'description', val);
+                          handleProductSelect(index, val);
                         }}
+                        onOptionSelect={(val) => handleProductSelect(index, val)}
+                        options={products.map((p) => p.name)}
                         placeholder="Ürün ara veya yeni ekle"
                       />
-                      <datalist id={`product-options-${index}`}>
-                        {products.map((p) => (
-                          <option key={p.id} value={p.name} />
-                        ))}
-                      </datalist>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
