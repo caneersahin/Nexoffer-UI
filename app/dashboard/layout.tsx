@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import { useCompanyStore } from '@/store/companyStore';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 
@@ -12,13 +13,16 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { user, isLoading } = useAuthStore();
+  const { fetchCompany } = useCompanyStore();
   const router = useRouter();
 
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login');
+    } else if (user) {
+      fetchCompany();
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading, router, fetchCompany]);
 
   if (isLoading) {
     return (
