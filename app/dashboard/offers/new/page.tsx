@@ -363,15 +363,13 @@ export default function NewOfferPage() {
                         Ürün
                       </label>
                       <AutocompleteInput
-                        value={item.description}
-                        onChange={(val) => {
-                          handleItemChange(index, 'description', val);
-                          handleProductSelect(index, val);
-                        }}
-                        onOptionSelect={(val) => handleProductSelect(index, val)}
-                        options={products.map((p) => p.name)}
-                        placeholder="Ürün ara veya yeni ekle"
-                      />
+                          value={item.description}
+                          onChange={(val) => handleItemChange(index, 'description', val)} // ✅ Sadece yazma
+                          onOptionSelect={(val) => handleProductSelect(index, val)}       // ✅ Sadece seçim
+                          options={products.map((p) => p.name)}
+                          placeholder="Ürün ara veya yeni ekle"
+                        />
+
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
