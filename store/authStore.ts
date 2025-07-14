@@ -7,6 +7,7 @@ interface User {
   firstName: string;
   lastName: string;
   email: string;
+  role?: string;
   companyId?: number;
   isActive: boolean;
   createdAt: string;
