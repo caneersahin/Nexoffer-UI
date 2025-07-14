@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuthStore } from '@/store/authStore';
 import {
   LayoutDashboard,
   FileText,
@@ -12,6 +13,7 @@ import {
   CreditCard,
   Settings,
   Package,
+  Shield,
   Menu,
   X
 } from 'lucide-react';
@@ -30,6 +32,12 @@ const navigation = [
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { user } = useAuthStore();
+
+  const links = [...navigation];
+  if (user?.role === 'SuperAdmin') {
+    links.push({ name: 'Admin', href: '/dashboard/admin', icon: Shield });
+  }
 
   return (
     <>
@@ -54,7 +62,7 @@ export default function Sidebar() {
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-2">
-            {navigation.map((item) => {
+            {links.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
                 <Link
