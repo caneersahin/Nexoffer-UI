@@ -34,10 +34,9 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <div className="flex items-center space-x-2">
-            <Building2 className="h-10 w-10 text-primary-600" />
-            <span className="text-2xl font-bold text-gray-900">TeklifPro</span>
-          </div>
+      <div className="flex items-center space-x-2">
+      <img src="/logos/logo5.png" className="h-35 w-72"  alt="Nexoffer Logo"  />
+    </div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
           Hesabınıza giriş yapın

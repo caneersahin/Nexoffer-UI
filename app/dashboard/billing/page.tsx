@@ -22,8 +22,8 @@ const plans = [
     interval: 'aylık',
     features: [
       '5 teklif/ay',
-      '1 kullanıcı',
-      'Temel şablonlar',
+      // '1 kullanıcı',
+      // 'Temel şablonlar',
       'E-posta desteği',
     ],
     limits: {
@@ -39,12 +39,12 @@ const plans = [
     interval: 'aylık',
     popular: true,
     features: [
-      '50 teklif/ay',
-      '5 kullanıcı',
-      'Tüm şablonlar',
+      'Sınırsız teklif/ay',
+      // 'Sınırsız kullanıcı',
+      'E-posta desteği',
+      //'Tüm şablonlar',
       'Öncelikli destek',
-      'API erişimi',
-      'Detaylı raporlar',
+      // 'API erişimi',
     ],
     limits: {
       offers: 50,
@@ -52,26 +52,7 @@ const plans = [
       storage: '5GB',
     },
   },
-  {
-    name: 'Enterprise',
-    price: 299,
-    currency: 'TRY',
-    interval: 'aylık',
-    features: [
-      'Sınırsız teklif',
-      'Sınırsız kullanıcı',
-      'Özel şablonlar',
-      '7/24 destek',
-      'API erişimi',
-      'Gelişmiş raporlar',
-      'Özel entegrasyonlar',
-    ],
-    limits: {
-      offers: 'Sınırsız',
-      users: 'Sınırsız',
-      storage: '50GB',
-    },
-  },
+ 
 ];
 
 export default function BillingPage() {
@@ -210,7 +191,7 @@ export default function BillingPage() {
           <h2 className="text-lg font-semibold">Planları Karşılaştır</h2>
         </div>
         <div className="card-body">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {plans.map((plan) => (
               <div
                 key={plan.name}

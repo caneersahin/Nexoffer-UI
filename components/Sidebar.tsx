@@ -48,9 +48,9 @@ export default function Sidebar() {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center px-6 py-4 border-b dark:border-gray-700">
-            <Building2 className="h-8 w-8 text-primary-600" />
-            <span className="ml-3 text-xl font-bold text-gray-900 dark:text-gray-100">TeklifPro</span>
+           <img src="/logos/logo5.png" alt="Nexoffer Logo" />
           </div>
+
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-2">
@@ -77,7 +77,7 @@ export default function Sidebar() {
           {/* Footer */}
           <div className="p-4 border-t dark:border-gray-700">
             <div className="text-xs text-gray-500 dark:text-gray-400">
-              © 2024 TeklifPro
+              © 2025 Nexoffer
             </div>
           </div>
         </div>
