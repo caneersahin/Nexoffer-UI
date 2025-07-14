@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { api } from '../lib/api';
+import { useCompanyStore } from './companyStore';
 
 export interface User {
   id: string;
@@ -58,12 +59,18 @@ export const useUserStore = create<UserState>((set, get) => ({
 
   createUser: async (data: CreateUserData) => {
     try {
+      const { company } = useCompanyStore.getState();
+      const { users } = get();
+      if (company && company.subscriptionPlan === 'Free' && users.length >= 2) {
+        throw new Error('Ücretsiz planda en fazla 2 kullanıcı ekleyebilirsiniz.');
+      }
+
       const response = await api.post('/api/users', data);
       const newUser: User = response.data;
       set((state) => ({ users: [...state.users, newUser] }));
       return newUser;
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Kullanıcı oluşturulamadı');
+      throw new Error(error.response?.data?.message || error.message || 'Kullanıcı oluşturulamadı');
     }
   },
 

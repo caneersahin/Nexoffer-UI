@@ -39,7 +39,7 @@ export default function Header() {
               className="hidden sm:block text-sm text-gray-600 dark:text-gray-300 mr-2 hover:underline cursor-pointer"
             >
               {company.subscriptionPlan === 'Free'
-                ? `Ücretsiz Plan - ${company.offersUsed}/5`
+                ? `Ücretsiz Plan - ${company.offersUsed}/3`
                 : `${company.subscriptionPlan} Planı`}
             </a>
           )}
