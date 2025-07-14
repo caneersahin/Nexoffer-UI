@@ -3,6 +3,7 @@
 import { useState,useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { useUserStore } from '@/store/userStore';
+import { useCompanyStore } from '@/store/companyStore';
 import {
   Plus,
   Trash2,
@@ -21,6 +22,7 @@ export default function UsersClient() {
   const { user: currentUser } = useAuthStore();
   const { users, fetchUsers, createUser, deleteUser, toggleUserStatus } =
     useUserStore();
+  const { company } = useCompanyStore();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -79,7 +81,12 @@ export default function UsersClient() {
           <h1 className="text-2xl font-bold text-gray-900">Kullanıcı Yönetimi</h1>
           <p className="text-gray-600">Şirket kullanıcılarını yönetin ve düzenleyin.</p>
         </div>
-        <button onClick={() => setShowCreateModal(true)} className="btn btn-primary btn-md">
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="btn btn-primary btn-md"
+          disabled={company?.subscriptionPlan === 'Free' && users.length >= 2}
+          title={company?.subscriptionPlan === 'Free' && users.length >= 2 ? 'Ücretsiz planda en fazla 2 kullanıcı ekleyebilirsiniz.' : ''}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Yeni Kullanıcı
         </button>

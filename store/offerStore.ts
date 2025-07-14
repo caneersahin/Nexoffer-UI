@@ -141,7 +141,7 @@ export const useOfferStore = create<OfferState>((set, get) => ({
   sendOffer: async (id: number) => {
     try {
       const { company, fetchCompany } = useCompanyStore.getState();
-      if (company && company.subscriptionPlan === 'Free' && company.offersUsed >= 5) {
+      if (company && company.subscriptionPlan === 'Free' && company.offersUsed >= 3) {
         throw new Error('Ücretsiz plan limiti doldu. Lütfen planınızı yükseltin.');
       }
 

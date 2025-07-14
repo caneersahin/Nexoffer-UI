@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useCompanyStore } from '@/store/companyStore';
+import { useUserStore } from '@/store/userStore';
 import PaymentModal from '@/components/PaymentModal';
 import toast from 'react-hot-toast';
 import { 
@@ -21,14 +22,14 @@ const plans = [
     currency: 'TRY',
     interval: 'aylık',
     features: [
-      '5 teklif/ay',
-      // '1 kullanıcı',
+      '3 teklif/ay',
+      '2 kullanıcı',
       // 'Temel şablonlar',
       'E-posta desteği',
     ],
     limits: {
-      offers: 5,
-      users: 1,
+      offers: 3,
+      users: 2,
       storage: '500MB',
     },
   },
@@ -57,13 +58,15 @@ const plans = [
 
 export default function BillingPage() {
   const { company, fetchCompany, upgradePlan } = useCompanyStore();
+  const { users, fetchUsers } = useUserStore();
   const [selectedPlan, setSelectedPlan] = useState<{name: string; price: number} | null>(null);
   const [processing, setProcessing] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
 
   useEffect(() => {
     fetchCompany();
-  }, [fetchCompany]);
+    fetchUsers();
+  }, [fetchCompany, fetchUsers]);
 
   const handlePlanSelect = (planName: string, price: number) => {
     setSelectedPlan({ name: planName, price });
@@ -144,11 +147,11 @@ export default function BillingPage() {
               <div className="mt-2 bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-blue-600 h-2 rounded-full"
-                  style={{ width: `${company ? Math.min((company.offersUsed / 5) * 100, 100) : 0}%` }}
+                  style={{ width: `${company ? Math.min((company.offersUsed / 3) * 100, 100) : 0}%` }}
                 ></div>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                {company?.subscriptionPlan === 'Free' ? '5 limitinden' : 'Sınırsız'}
+                {company?.subscriptionPlan === 'Free' ? '3 limitinden' : 'Sınırsız'}
               </p>
             </div>
             
@@ -156,14 +159,19 @@ export default function BillingPage() {
               <div className="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <Users className="h-6 w-6 text-green-600" />
               </div>
-              <p className="text-2xl font-bold text-gray-900">3</p>
+              <p className="text-2xl font-bold text-gray-900">{users.length}</p>
               <p className="text-sm text-gray-500">Aktif Kullanıcı</p>
               <div className="mt-2 bg-gray-200 rounded-full h-2">
-                <div className="bg-green-600 h-2 rounded-full" style={{ width: '60%' }}></div>
+                <div
+                  className="bg-green-600 h-2 rounded-full"
+                  style={{
+                    width: `${company ? Math.min((users.length / (company.subscriptionPlan === 'Free' ? 2 : company.subscriptionPlan === 'Pro' ? 5 : users.length || 1)) * 100, 100) : 0}%`
+                  }}
+                ></div>
               </div>
               <p className="text-xs text-gray-500 mt-1">
                 {
-                company?.subscriptionPlan === 'Free' ? '1 limitinden' :
+                company?.subscriptionPlan === 'Free' ? '2 limitinden' :
                  company?.subscriptionPlan === 'Pro' ? '5 limitinden' :
                  'Sınırsız'                
                 }

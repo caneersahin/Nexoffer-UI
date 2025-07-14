@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useCompanyStore } from '@/store/companyStore';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
+import SubscriptionExpired from '@/components/SubscriptionExpired';
 
 export default function DashboardLayout({
   children,
@@ -13,7 +14,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { user, isLoading } = useAuthStore();
-  const { fetchCompany } = useCompanyStore();
+  const { company, fetchCompany } = useCompanyStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -37,6 +38,10 @@ export default function DashboardLayout({
 
   if (!user) {
     return null;
+  }
+
+  if (company && !company.isActive) {
+    return <SubscriptionExpired subscriptionEndDate={company.subscriptionEndDate} />;
   }
 
   return (
