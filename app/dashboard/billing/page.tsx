@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useCompanyStore } from '@/store/companyStore';
 import { useUserStore } from '@/store/userStore';
+import { useOfferStore } from '@/store/offerStore';
+import { usePaymentStore } from '@/store/paymentStore';
 import PaymentModal from '@/components/PaymentModal';
 import toast from 'react-hot-toast';
 import { 
@@ -59,6 +61,9 @@ const plans = [
 export default function BillingPage() {
   const { company, fetchCompany, upgradePlan } = useCompanyStore();
   const { users, fetchUsers } = useUserStore();
+  const { offers, fetchOffers } = useOfferStore();
+  const { payments, fetchPayments } = usePaymentStore();
+  const [totalAmount, setTotalAmount] = useState(0);
   const [selectedPlan, setSelectedPlan] = useState<{name: string; price: number} | null>(null);
   const [processing, setProcessing] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
@@ -66,7 +71,18 @@ export default function BillingPage() {
   useEffect(() => {
     fetchCompany();
     fetchUsers();
-  }, [fetchCompany, fetchUsers]);
+    fetchOffers();
+    fetchPayments();
+  }, [fetchCompany, fetchUsers, fetchOffers, fetchPayments]);
+
+  useEffect(() => {
+    const now = new Date();
+    const monthOffers = offers.filter(o => {
+      const d = new Date(o.createdAt);
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    });
+    setTotalAmount(monthOffers.reduce((sum, o) => sum + o.totalAmount, 0));
+  }, [offers]);
 
   const handlePlanSelect = (planName: string, price: number) => {
     setSelectedPlan({ name: planName, price });
@@ -77,11 +93,10 @@ export default function BillingPage() {
     if (!selectedPlan) return;
     setProcessing(true);
     try {
-      await upgradePlan(selectedPlan.name);
+      await upgradePlan(selectedPlan.name, selectedPlan.price);
       toast.success('Plan başarıyla güncellendi');
-    console.log("company", company)
-
       await fetchCompany();
+      await fetchPayments();
     } catch (error: any) {
       toast.error(error.message || 'İşlem başarısız');
     } finally {
@@ -182,10 +197,12 @@ export default function BillingPage() {
               <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <DollarSign className="h-6 w-6 text-purple-600" />
               </div>
-              <p className="text-2xl font-bold text-gray-900">₺45,320</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {totalAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+              </p>
               <p className="text-sm text-gray-500">Toplam Teklif Değeri</p>
               <div className="mt-2 bg-gray-200 rounded-full h-2">
-                <div className="bg-purple-600 h-2 rounded-full" style={{ width: '78%' }}></div>
+                <div className="bg-purple-600 h-2 rounded-full" style={{ width: '100%' }}></div>
               </div>
               <p className="text-xs text-gray-500 mt-1">Bu ay</p>
             </div>
@@ -274,33 +291,25 @@ export default function BillingPage() {
         </div>
         <div className="card-body">
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 border rounded-lg">
-              <div className="flex items-center">
-                <Calendar className="h-5 w-5 text-gray-400 mr-3" />
-                <div>
-                  <p className="font-medium">Pro Plan - Ocak 2024</p>
-                  <p className="text-sm text-gray-500">01 Ocak 2024</p>
+            {payments.map((p) => (
+              <div key={p.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center">
+                  <Calendar className="h-5 w-5 text-gray-400 mr-3" />
+                  <div>
+                    <p className="font-medium">{company?.subscriptionPlan} Plan</p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(p.paidAt).toLocaleDateString('tr-TR')}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium">
+                    {p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+                  </p>
+                  <p className="text-sm text-green-600">Ödendi</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="font-medium">₺99.00</p>
-                <p className="text-sm text-green-600">Ödendi</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between p-4 border rounded-lg">
-              <div className="flex items-center">
-                <Calendar className="h-5 w-5 text-gray-400 mr-3" />
-                <div>
-                  <p className="font-medium">Pro Plan - Aralık 2023</p>
-                  <p className="text-sm text-gray-500">01 Aralık 2023</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="font-medium">₺99.00</p>
-                <p className="text-sm text-green-600">Ödendi</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
