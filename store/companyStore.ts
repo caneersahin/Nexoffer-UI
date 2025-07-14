@@ -35,7 +35,7 @@ interface CompanyState {
   fetchCompany: () => Promise<void>;
   updateCompany: (data: UpdateCompanyData) => Promise<void>;
   uploadLogo: (file: File) => Promise<void>;
-  upgradePlan: (plan: string) => Promise<void>;
+  upgradePlan: (plan: string, amount: number) => Promise<void>;
 }
 
 
@@ -84,9 +84,13 @@ export const useCompanyStore = create<CompanyState>((set, get) => ({
     }
   },
 
-  upgradePlan: async (plan: string) => {
+  upgradePlan: async (plan: string, amount: number) => {
     try {
-      const response = await api.post('/api/company/upgrade', { plan });
+      const response = await api.post('/api/company/upgrade', {
+        plan,
+        amount,
+        transactionId: Math.random().toString(36).substring(2, 10),
+      });
       set({ company: response.data });
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Plan yükseltilemedi');
