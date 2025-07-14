@@ -6,6 +6,7 @@ import { useUserStore } from '@/store/userStore';
 import { useOfferStore } from '@/store/offerStore';
 import { usePaymentStore } from '@/store/paymentStore';
 import PaymentModal from '@/components/PaymentModal';
+import ConfirmDialog from '@/components/ConfirmDialog';
 import toast from 'react-hot-toast';
 import { 
   CreditCard, 
@@ -67,6 +68,7 @@ export default function BillingPage() {
   const [selectedPlan, setSelectedPlan] = useState<{name: string; price: number} | null>(null);
   const [processing, setProcessing] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     fetchCompany();
@@ -86,7 +88,11 @@ export default function BillingPage() {
 
   const handlePlanSelect = (planName: string, price: number) => {
     setSelectedPlan({ name: planName, price });
-    setShowPayment(true);
+    if (price === 0) {
+      setShowConfirm(true);
+    } else {
+      setShowPayment(true);
+    }
   };
 
   const completePayment = async () => {
@@ -102,6 +108,23 @@ export default function BillingPage() {
     } finally {
       setProcessing(false);
       setShowPayment(false);
+      setSelectedPlan(null);
+    }
+  };
+
+  const confirmDowngrade = async () => {
+    if (!selectedPlan) return;
+    setProcessing(true);
+    try {
+      await upgradePlan(selectedPlan.name, selectedPlan.price);
+      toast.success('Plan başarıyla güncellendi');
+      await fetchCompany();
+      await fetchPayments();
+    } catch (error: any) {
+      toast.error(error.message || 'İşlem başarısız');
+    } finally {
+      setProcessing(false);
+      setShowConfirm(false);
       setSelectedPlan(null);
     }
   };
@@ -325,6 +348,23 @@ export default function BillingPage() {
               setSelectedPlan(null);
             }
           }}
+        />
+      )}
+      {selectedPlan && (
+        <ConfirmDialog
+          isOpen={showConfirm}
+          onClose={() => {
+            if (!processing) {
+              setShowConfirm(false);
+              setSelectedPlan(null);
+            }
+          }}
+          onConfirm={confirmDowngrade}
+          title="Ücretsiz Plana Geç"
+          message="Pro plan süreniz bitene kadar pro özellikleri kullanmaya devam edeceksiniz. Ardından ücretsiz plana geçeceksiniz. Emin misiniz?"
+          confirmText="Evet"
+          cancelText="Vazgeç"
+          type="warning"
         />
       )}
     </div>
